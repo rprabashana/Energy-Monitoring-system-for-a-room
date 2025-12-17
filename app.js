@@ -30,12 +30,18 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-// Load initial device states from Firebase
-Object.keys(devices).forEach(key => {
-  database.ref('devices/' + key + '/on').once('value').then(snapshot => {
-    devices[key].on = snapshot.val() || false;
-    syncUI();
+// Sign in anonymously
+firebase.auth().signInAnonymously().then(() => {
+  console.log('Signed in anonymously');
+  // Load initial device states from Firebase
+  Object.keys(devices).forEach(key => {
+    database.ref('devices/' + key + '/on').once('value').then(snapshot => {
+      devices[key].on = snapshot.val() || false;
+      syncUI();
+    });
   });
+}).catch((error) => {
+  console.error('Auth error:', error);
 });
 
 // State
