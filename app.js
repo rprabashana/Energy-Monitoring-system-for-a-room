@@ -9,8 +9,8 @@ const devices = {
   light1: {name:'Light 1', power:10, on:false},
   light2: {name:'Light 2', power:10, on:false},
   fan: {name:'Fan', power:75, on:false},
-  ac1: {name:'AC', power:1200, on:false},
-  ac2: {name:'Heater', power:1500, on:false},
+  ac: {name:'AC', power:1200, on:false},
+  heater: {name:'Heater', power:1500, on:false},
   wall1: {name:'Wall Plug 1', power:100, on:false},
   wall2: {name:'Wall Plug 2', power:100, on:false}
 };
