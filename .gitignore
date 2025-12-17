@@ -89,3 +89,9 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# Video files
+*.mp4
+*.avi
+*.mov
+*.mkv

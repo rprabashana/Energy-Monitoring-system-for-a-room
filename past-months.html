@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Past Months - Monthly Usage</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>Past Months — Monthly Usage</h1>
+      <div class="subtitle"><a href="index.html" style="color:inherit;text-decoration:none">← Back</a></div>
+    </header>
+
+    <main style="padding:18px">
+      <section class="card full">
+        <h3>Last 3 Months Summary</h3>
+        <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:12px">
+          <div style="flex:1;min-width:260px">
+            <canvas id="monthlyBarChart" style="height:260px"></canvas>
+          </div>
+          <div style="width:320px;min-width:220px">
+            <canvas id="devicePieChart" style="height:260px"></canvas>
+          </div>
+        </div>
+
+        <div style="margin-top:14px">
+          <h4 style="margin-bottom:8px;color:var(--muted)">Details</h4>
+          <table style="width:100%;border-collapse:collapse">
+            <thead><tr><th style="text-align:left;padding:8px;color:var(--muted)">Month</th><th style="text-align:right;padding:8px;color:var(--muted)">Energy (kWh)</th><th style="text-align:right;padding:8px;color:var(--muted)">Cost</th></tr></thead>
+            <tbody id="monthsTable"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">Generated sample summary — replace data with your backend or CSV.</footer>
+
+    <script>
+      // Build last 3 months labels dynamically
+      function getLastNMonths(n){
+        const labels = [];
+        const d = new Date();
+        d.setDate(1);
+        for (let i= n; i>=1; --i){
+          const dt = new Date(d.getFullYear(), d.getMonth()-i+1, 1);
+          labels.push(dt.toLocaleString(undefined,{month:'short', year:'numeric'}));
+        }
+        return labels;
+      }
+
+      const labels = getLastNMonths(3); // last 3 months
+      // Sample data (replace with real monthly aggregates)
+      const monthlyValues = [120.4, 98.2, 110.7]; // kWh
+      const costPerKWh = 0.20;
+
+      // Monthly bar chart
+      const mbCtx = document.getElementById('monthlyBarChart').getContext('2d');
+      new Chart(mbCtx, {
+        type:'bar',
+        data:{labels, datasets:[{label:'kWh', data: monthlyValues, backgroundColor:['#2ecc71','#45aaf2','#ffa726'], borderRadius:6}]},
+        options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+      });
+
+      // Device breakdown sample (for most recent month)
+      const deviceLabels = ['Light 1','Light 2','Fan','AC','Heater','Wall1','Wall2'];
+      const deviceValues = [6,5,22,40,20,8,9]; // percentages (sum 110; will scale)
+      const total = deviceValues.reduce((s,v)=>s+v,0);
+      const scaled = deviceValues.map(v=>Math.round((v/total)*monthlyValues[monthlyValues.length-1]*100)/100);
+
+      const dpCtx = document.getElementById('devicePieChart').getContext('2d');
+      new Chart(dpCtx, {
+        type:'pie',
+        data:{labels:deviceLabels,datasets:[{data: scaled, backgroundColor:['#ffe082','#ffd54f','#ffd966','#45aaf2','#2ecc71','#90caf9','#f48fb1']}]},
+        options:{plugins:{legend:{position:'right'}}}
+      });
+
+      // Fill details table
+      const tbody = document.getElementById('monthsTable');
+      monthlyValues.forEach((v, i)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td style="padding:8px">${labels[i]}</td><td style="padding:8px;text-align:right">${v.toFixed(2)} kWh</td><td style="padding:8px;text-align:right">$${(v*costPerKWh).toFixed(2)}</td>`;
+        tbody.appendChild(tr);
+      });
+    </script>
+  </body>
+</html>

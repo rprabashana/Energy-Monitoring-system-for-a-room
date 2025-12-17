@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Current Power — Room Energy</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>Current Power</h1>
+      <div class="subtitle"><a href="index.html" style="color:inherit;opacity:0.9;text-decoration:none">← Back to Dashboard</a></div>
+    </header>
+
+    <main style="padding:18px;">
+      <section class="card full" style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <h3 style="margin:0;color:var(--muted);">Live Power</h3>
+            <div id="currentPower" class="big">0 W</div>
+          </div>
+          <div style="text-align:right">
+            <div style="color:var(--muted)">Energy Today</div>
+            <div id="energyToday" class="big">0.000 kWh</div>
+            <div style="height:6px"></div>
+            <div style="color:var(--muted)">Estimated Cost</div>
+            <div id="costToday" class="big">$0.00</div>
+          </div>
+        </div>
+
+        <div style="flex:1;" id="powerCard">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <h3 style="margin:0;color:var(--muted)">Live Power</h3>
+            <button class="close-graph" data-target="#powerCard">Close</button>
+          </div>
+          <canvas id="powerChart"></canvas>
+        </div>
+
+        <div style="margin-top:12px;" id="energyCard">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <h3 style="margin:0;color:var(--muted)">Energy (kWh)</h3>
+            <button class="close-graph" data-target="#energyCard">Close</button>
+          </div>
+          <canvas id="energyChart" style="height:160px;"></canvas>
+        </div>
+
+        <div>
+          <h3 style="margin-bottom:8px;color:var(--muted)">Recent readings</h3>
+          <table id="historyTable">
+            <thead><tr><th>Time</th><th>Power (W)</th><th>Energy (kWh)</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <small>Live simulated readings — replace `app.js` with real feed to connect sensors.</small>
+    </footer>
+
+    <script defer src="app.js"></script>
+  </body>
+</html>

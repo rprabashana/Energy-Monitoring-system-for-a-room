@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Room Energy Management Dashboard</title>
+		<link rel="stylesheet" href="styles.css" />
+		<!-- Chart.js CDN -->
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<!-- Firebase CDN -->
+		<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
+	</head>
+	<body>
+		<header class="topbar">
+			<!-- Top-left three-dot menu -->
+			<div class="menu-wrap">
+				<button class="menu-dots" aria-label="Open menu" aria-expanded="false" title="Menu">
+					<span class="dot"></span>
+					<span class="dot"></span>
+					<span class="dot"></span>
+				</button>
+				<nav class="top-left-menu" aria-hidden="true">
+					<ul>
+						<li><a href="realtime.html">Real-time energy usage graph</a></li>
+						<li><a href="monthly-summary.html">Monthly energy consumption summary</a></li>
+						<li><a href="device-comparison.html">Comparison between devices</a></li>
+						<li><a href="predicted-usage.html">Predicted next month usage</a></li>
+						<li><a href="tips.html">Energy saving tips</a></li>
+					</ul>
+				</nav>
+			</div>
+			<h1>Room Energy Management</h1>
+			<div style="display:flex;align-items:center;gap:12px">
+				<div class="subtitle">Live monitoring • simulated data</div>
+				<a href="past-months.html" class="big-button">Past months monthly usage</a>
+			</div>
+		</header>
+
+		<main class="grid">
+					<section class="panel stats">
+								<a class="card stat-box stat-link" href="current-power.html" role="link">
+									<h3>Current Power</h3>
+									<div id="currentPower" class="big">0 W</div>
+								</a>
+						<div class="card stat-box">
+							<h3>Energy Today</h3>
+							<div id="energyToday" class="big">0.000 kWh</div>
+						</div>
+						<div class="card stat-box">
+							<h3>Cost (est.)</h3>
+							<div id="costToday" class="big">$0.00</div>
+						</div>
+
+				<div class="card controls">
+					<h3>Device Controls</h3>
+					<div class="device-list">
+						<button class="device" data-device="light1">Light 1 <span class="small">(10W)</span></button>
+						<button class="device" data-device="light2">Light 2 <span class="small">(10W)</span></button>
+						<button class="device" data-device="fan">Fan <span class="small">(75W)</span></button>
+						<button class="device" data-device="ac">AC <span class="small">(1200W)</span></button>
+						<button class="device" data-device="heater">Heater <span class="small">(1500W)</span></button>
+						<button class="device" data-device="wall1">Wall Plug 1 <span class="small">(100W)</span></button>
+						<button class="device" data-device="wall2">Wall Plug 2 <span class="small">(100W)</span></button>
+						<div style="margin-top:8px">
+							<a href="controls.html" class="badge">Open full device controls</a>
+						</div>
+					</div>
+				</div>
+			</section>
+
+					<section class="panel chart">
+						<div class="card full" id="powerCard">
+							<div style="display:flex;align-items:center;justify-content:space-between">
+								<h3 style="margin:0">Power (last 60s)</h3>
+								<button class="close-graph" data-target="#powerCard">Close</button>
+							</div>
+							<canvas id="powerChart"></canvas>
+						</div>
+
+						<div class="card" id="energyCard">
+							<div style="display:flex;align-items:center;justify-content:space-between">
+								<h3 style="margin:0">Energy (kWh)</h3>
+								<button class="close-graph" data-target="#energyCard">Close</button>
+							</div>
+							<canvas id="energyChart" style="height:200px;"></canvas>
+						</div>
+
+						<div class="card">
+							<h3>Recent Readings</h3>
+							<table id="historyTable">
+								<thead><tr><th>Time</th><th>Power (W)</th><th>Energy (kWh)</th></tr></thead>
+								<tbody></tbody>
+							</table>
+						</div>
+					</section>
+		</main>
+
+		<footer class="footer">
+			<small>Demo: simulated sensor values. Customize <code>app.js</code> for real sensors.</small>
+		</footer>
+
+		<!-- Floating device access button + panel -->
+		<button class="device-access" aria-label="Device controls" title="Device Controls">
+			<span class="access-icon">⚡</span>
+		</button>
+
+		<div class="device-panel hidden" id="devicePanel" aria-hidden="true">
+			<div class="device-panel-header">
+				<strong>Device Controls</strong>
+				<button class="close-panel" aria-label="Close">✕</button>
+			</div>
+			<div class="device-panel-body">
+				<!-- one row per device -->
+				<div class="device-row">
+					<div class="label">Light 1</div>
+					<div class="actions">
+						<button class="device-action" data-device="light1" data-action="on">On</button>
+						<button class="device-action" data-device="light1" data-action="off">Off</button>
+					</div>
+				</div>
+				<div class="device-row">
+					<div class="label">Light 2</div>
+					<div class="actions">
+						<button class="device-action" data-device="light2" data-action="on">On</button>
+						<button class="device-action" data-device="light2" data-action="off">Off</button>
+					</div>
+				</div>
+				<div class="device-row">
+					<div class="label">Fan</div>
+					<div class="actions">
+						<button class="device-action" data-device="fan" data-action="on">On</button>
+						<button class="device-action" data-device="fan" data-action="off">Off</button>
+					</div>
+				</div>
+				<div class="device-row">
+					<div class="label">AC</div>
+					<div class="actions">
+						<button class="device-action" data-device="ac" data-action="on">On</button>
+						<button class="device-action" data-device="ac" data-action="off">Off</button>
+					</div>
+				</div>
+				<div class="device-row">
+					<div class="label">Heater</div>
+					<div class="actions">
+						<button class="device-action" data-device="heater" data-action="on">On</button>
+						<button class="device-action" data-device="heater" data-action="off">Off</button>
+					</div>
+				</div>
+				<div class="device-row">
+					<div class="label">Wall Plug 1</div>
+					<div class="actions">
+						<button class="device-action" data-device="wall1" data-action="on">On</button>
+						<button class="device-action" data-device="wall1" data-action="off">Off</button>
+					</div>
+				</div>
+				<div class="device-row">
+					<div class="label">Wall Plug 2</div>
+					<div class="actions">
+						<button class="device-action" data-device="wall2" data-action="on">On</button>
+						<button class="device-action" data-device="wall2" data-action="off">Off</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script defer src="app.js"></script>
+	</body>
+</html>
